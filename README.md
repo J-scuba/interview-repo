@@ -6,6 +6,8 @@ Minimal native Android and iOS hello world applications with GitHub Actions CI.
 
 The Android app is in [`android`](android). Build a debug APK with:
 
+The Android build requires JDK 17, matching the CI workflow.
+
 ```sh
 cd android
 ./gradlew assembleDebug
