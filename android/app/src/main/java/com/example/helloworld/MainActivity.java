@@ -7,9 +7,14 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppLogger logger = AppLogger.fromConfig();
+        logger.d(TAG, "onCreate, API key configured: " + !AppConfig.apiKey().isEmpty());
 
         TextView greeting = new TextView(this);
         greeting.setText("Hello, world!");

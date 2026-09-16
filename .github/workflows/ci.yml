@@ -20,6 +20,23 @@ jobs:
       - name: Install Android SDK
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
+      - name: Create .env
+        working-directory: android
+        env:
+          API_KEY: ${{ secrets.API_KEY || 'XXX-YYY-ZZZ' }}
+        run: printf 'ENABLE_LOGS=true\nAPI_KEY=%s\n' "$API_KEY" > .env
+      - name: Unit tests with logging disabled
+        working-directory: android
+        run: |
+          sed -i 's/^ENABLE_LOGS=.*/ENABLE_LOGS=false/' .env
+          ./gradlew testDebugUnitTest
+          echo "::notice title=ENABLE_LOGS=false::$(cat app/build/test-results/testDebugUnitTest/*.xml | grep -c '<testcase') unit tests passed"
+      - name: Unit tests with logging enabled
+        working-directory: android
+        run: |
+          sed -i 's/^ENABLE_LOGS=.*/ENABLE_LOGS=true/' .env
+          ./gradlew testDebugUnitTest
+          echo "::notice title=ENABLE_LOGS=true::$(cat app/build/test-results/testDebugUnitTest/*.xml | grep -c '<testcase') unit tests passed"
       - name: Build APK
         working-directory: android
         run: ./gradlew assembleDebug
